@@ -33,7 +33,7 @@ typedef enum {
     LIT_CHAR,
     
     // keywords
-    KW_CHAR,
+    KW_EXTERN,
     KW_INT,
     KW_FLOAT,
     KW_VOID,
