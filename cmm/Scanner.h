@@ -108,11 +108,12 @@ public:
         _col = 0;  // index of current character
         _buffer[0] = '\0';
         _tabSize = TAB_WIDTH;
-        _message.print(D_BUG, "Scanner Intialized");
     }
     
-    Scanner(FILE *fin) : Scanner() {
+    Scanner(FILE *fin, Message message) : Scanner() {
         _input = fin;
+        _message = message;
+        _message.print(D_BUG, "Scanner Intialized");        
     }
     
     void setInput(FILE *fin) {

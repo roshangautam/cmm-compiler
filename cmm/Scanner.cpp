@@ -41,6 +41,7 @@ void Scanner::read() {
             if (c < TOK_EOF) { // Look we reached the end of file. Either everything has been commented out or the comment was never terminated. I am full, can't move anymore
                _token.setTokenType(ERR_BADCOMMENT);
                _token.setLexeme(_buffer);
+                return;
             }
         } else if (c == '/' && peekCh() == '/') { // this is single line comment
             _token.setRow(_row);
@@ -172,6 +173,7 @@ void Scanner::read() {
         }
         _token.setLexeme(_buffer);
     }
+    _message.print(D_BUG, "scanner: Found %s", getToken().getFormattedLexeme());
 }
 
 const char* Scanner::error() {

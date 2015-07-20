@@ -49,9 +49,10 @@ public:
     }
     
     Shell(int argc, char *argv[]):Shell() {
+        banner();       
         processArgs(argc, argv);
-        banner();
     }
+    
     Message getMessage() {
         return _message;
     }

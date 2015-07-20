@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
         shell.getMessage().print(VERBOSE, "compiler: reading from source file \"%s\"", shell.getSourceFilename());
     }
     
-    Parser parser = Parser(fin, shell.getTabWidthParam());
+    Parser parser = Parser(fin, shell.getTabWidthParam(), shell.getMessage());
     
     if (parser.read()) {
         shell.getMessage().print(NORMAL, "%i lines processed", parser.getScanner().getLinesRead());

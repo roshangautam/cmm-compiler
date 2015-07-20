@@ -20,12 +20,11 @@ class Parser {
     Message _message;
 public:
 
-    Parser() {
-        _message.print(D_BUG, "Parser:Initialized");
-    }
     
-    Parser(FILE *fin, int tabSize) : Parser() {
-        _scanner = Scanner(fin);
+    Parser(FILE *fin, int tabSize, Message message) {
+        _message = message;
+        _message.print(D_BUG, "Parser:Initialized");        
+        _scanner = Scanner(fin, message);
         _scanner.setTabWidth(tabSize);
     }
     

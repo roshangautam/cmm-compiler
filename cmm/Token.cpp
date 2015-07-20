@@ -69,7 +69,7 @@ char* Token::getFormattedLexeme() {
             sprintf(result, "<ERROR<%d,%d>: Bad Floating point value found: \"%s\"", _row, _col, _lexeme);
             break;
         case ERR_BADCOMMENT:
-            sprintf(result, "ERROR<%d,%d>: Unterminated Comment found: \"%s...", _row, _col, _lexeme);
+            sprintf(result, "ERROR<%d,%d>: Unterminated Comment found: EOF", _row, _col);
             break;
         case ERR_BUFFEROVRFLW:
             sprintf(result, "ERROR<%d,%d>:Buffer Overflow", _row, _col);
