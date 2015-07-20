@@ -57,8 +57,8 @@ void Shell::processArgs(int argc, char *argv[]) {
                 printf("    --version     print out current version (or -V)\n");
                 printf("    --silent      run silently: implies -W:off (or -s)\n");
                 printf("    --verbose     turn on verbose messages (or -v)\n");
-                printf("    --D_BUG       turn on D_BUGging messages (or -d)\n");
-                printf("    --D_BUGfile:F print D_BUG messages to file F: implies -d (or -D:F)\n");
+                printf("    --debug       turn on D_BUGging messages (or -d)\n");
+                printf("    --debugfile:F print D_BUG messages to file F: implies -d (or -D:F)\n");
                 printf("    --warnings:S  switch on/off warning messages: default 'on' (or -W:S)\n");
                 printf("    --errorfile:F print error messages to file F (or -E:F)\n");
                 printf("    --messages:N  set message print level: N = 0-4: default 2 (or -M:N)\n");
@@ -73,9 +73,9 @@ void Shell::processArgs(int argc, char *argv[]) {
                 _message.setProcessLevel(SILENT);
             } else if (strcmp(opt, "--verbose") == 0     || strcmp(opt, "-v") == 0) {
                 _message.setProcessLevel(VERBOSE);
-            } else if (strcmp(opt, "--D_BUG") == 0     || strcmp(opt, "-d") == 0) {
+            } else if (strcmp(opt, "--debug") == 0     || strcmp(opt, "-d") == 0) {
                 _message.setProcessLevel(D_BUG);
-            } else if (strcmp(opt, "--D_BUGfile") == 0 || strcmp(opt, "-D") == 0) {
+            } else if (strcmp(opt, "--debugfile") == 0 || strcmp(opt, "-D") == 0) {
                 if (arg == NULL || arg[0] == '\0') {
                     _message.print(WARNING, "command-line: filename missing: not redirecting D_BUG messages");
                 } else {

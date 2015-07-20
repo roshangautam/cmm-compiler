@@ -38,6 +38,7 @@ class Message {
     FILE* _fdbg;
     FILE* _ferr;
 public:
+    
     Message() {
         _processLevel = NORMAL;
         _warnings = true;
@@ -45,7 +46,11 @@ public:
         _errorCount = 0;
         _fdbg = stdout;
         _ferr = stderr;
-        print(D_BUG, "Error Handler Initialized");
+    }
+    
+    Message(MessageLevel level):Message() {
+        _processLevel = level;
+        print(D_BUG, "Error Handler Initialized");        
     }
     
     void setProcessLevel(MessageLevel level) {
