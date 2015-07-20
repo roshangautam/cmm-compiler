@@ -36,14 +36,14 @@ class Scanner {
         "",  // identfiers
         "if", "else", "while",  // control strcutures
         "return",  // return statement
-        "void", "char", "int", "float" // typespecifiers
+        "void", "extern", "int", "float" // typespecifiers
     };
     
     tokenType _tokens[9] = {
         TOK_IDENT,
         KW_IF, KW_ELSE, KW_WHILE,
         KW_RETURN,
-        KW_VOID, KW_CHAR, KW_INT, KW_FLOAT
+        KW_VOID, KW_EXTERN, KW_INT, KW_FLOAT
     };
     
     int hash(char *s) {

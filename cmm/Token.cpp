@@ -104,8 +104,8 @@ char* Token::getFormattedLexeme() {
         case KW_WHILE:
             sprintf(result, "KEYWORD<%d,%d>: while", _row, _col);
             break;
-        case KW_CHAR:
-            sprintf(result, "KEYWORD<%d,%d>: char", _row, _col);
+        case KW_EXTERN:
+            sprintf(result, "KEYWORD<%d,%d>: extern", _row, _col);
             break;
         case KW_ELSE:
             sprintf(result, "KEYWORD<%d,%d>: else", _row, _col);
