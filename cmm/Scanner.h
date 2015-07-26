@@ -12,8 +12,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "Message.h"
-#include "Token.h"
+#include "message.h"
+#include "token.h"
 
 //TODO: add command-line option for bufflen
 #define BUFF_LEN 256
@@ -51,7 +51,7 @@ class Scanner {
     }
     
     tokenType searchKeyWord(char *s) {
-        _message.print(D_BUG, "Search Keyword '%s'", s);
+        _message.print(DBUG, "Search Keyword '%s'", s);
         int h = hash(s);
         if (strcmp(_keywords[_indices[h]], s) == 0)
             return _tokens[_indices[h]]; // if the hash matches return the keyword
@@ -113,7 +113,7 @@ public:
     Scanner(FILE *fin, Message message) : Scanner() {
         _input = fin;
         _message = message;
-        _message.print(D_BUG, "Scanner Intialized");        
+        _message.print(DBUG, "Scanner Intialized");        
     }
     
     void setInput(FILE *fin) {

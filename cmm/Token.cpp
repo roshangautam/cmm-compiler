@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Roshan Gautam. All rights reserved.
 //
 
-#include "Token.h"
+#include "token.h"
 
 
 void Token::setRow(int row) {
@@ -57,10 +57,7 @@ char* Token::getFormattedLexeme() {
     switch (_tokenType) {
             // ERRORS
         case ERR_BADINPUT:
-            sprintf(result, "ERROR<%d,%d>: Bad input found: \"0x%02x\"", _row, _col, _lexeme[0]);
-            break;
-        case ERR_BADCHAR:
-            sprintf(result, "ERROR<%d,%d>: Bad character found: \"0x%02x\"", _row, _col, _lexeme[0]);            
+            sprintf(result, "ERROR<%d,%d>: Unrecognized input found: \"0x%02x\"", _row, _col, _lexeme[0]);
             break;
         case ERR_BADSTR:
             sprintf(result, "ERROR<%d,%d>: Unterminated String found: \"%s...", _row, _col, _lexeme);

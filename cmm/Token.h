@@ -15,7 +15,6 @@
 
 typedef enum {
     // errors
-    ERR_BADCHAR = -6,
     ERR_BADINPUT = -5,
     ERR_BADSTR = -4,
     ERR_BADFLOAT = -3,

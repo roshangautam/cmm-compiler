@@ -26,7 +26,7 @@ typedef enum {
     CONCISE,
     NORMAL,
     VERBOSE,
-    D_BUG
+    DBUG
 } MessageLevel;
 
 
@@ -50,7 +50,7 @@ public:
     
     Message(MessageLevel level):Message() {
         _processLevel = level;
-        print(D_BUG, "Error Handler Initialized");        
+        print(DBUG, "Error Handler Initialized");        
     }
     
     void setProcessLevel(MessageLevel level) {

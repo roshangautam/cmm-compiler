@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Roshan Gautam. All rights reserved.
 //
 
-#include "Shell.h"
+#include "shell.h"
 
 char* Shell::version() {
     static char v[maxlength];
@@ -57,8 +57,8 @@ void Shell::processArgs(int argc, char *argv[]) {
                 printf("    --version     print out current version (or -V)\n");
                 printf("    --silent      run silently: implies -W:off (or -s)\n");
                 printf("    --verbose     turn on verbose messages (or -v)\n");
-                printf("    --debug       turn on D_BUGging messages (or -d)\n");
-                printf("    --debugfile:F print D_BUG messages to file F: implies -d (or -D:F)\n");
+                printf("    --debug       turn on DBUGging messages (or -d)\n");
+                printf("    --debugfile:F print DBUG messages to file F: implies -d (or -D:F)\n");
                 printf("    --warnings:S  switch on/off warning messages: default 'on' (or -W:S)\n");
                 printf("    --errorfile:F print error messages to file F (or -E:F)\n");
                 printf("    --messages:N  set message print level: N = 0-4: default 2 (or -M:N)\n");
@@ -74,14 +74,14 @@ void Shell::processArgs(int argc, char *argv[]) {
             } else if (strcmp(opt, "--verbose") == 0     || strcmp(opt, "-v") == 0) {
                 _message.setProcessLevel(VERBOSE);
             } else if (strcmp(opt, "--debug") == 0     || strcmp(opt, "-d") == 0) {
-                _message.setProcessLevel(D_BUG);
+                _message.setProcessLevel(DBUG);
             } else if (strcmp(opt, "--debugfile") == 0 || strcmp(opt, "-D") == 0) {
                 if (arg == NULL || arg[0] == '\0') {
-                    _message.print(WARNING, "command-line: filename missing: not redirecting D_BUG messages");
+                    _message.print(WARNING, "command-line: filename missing: not redirecting DBUG messages");
                 } else {
                     strncpy(dbgfilename, arg, namelen);
-                    _message.print(D_BUG, "command-line: redirecting D_BUG messages to \"%s\"", dbgfilename);
-                    _message.setProcessLevel(D_BUG);
+                    _message.print(DBUG, "command-line: redirecting DBUG messages to \"%s\"", dbgfilename);
+                    _message.setProcessLevel(DBUG);
                     _message.setDebugFile(fopen(dbgfilename, "w"));
                 }
             } else if (strcmp(opt, "--warnings") == 0  || strcmp(opt, "-W") == 0) {
@@ -102,7 +102,7 @@ void Shell::processArgs(int argc, char *argv[]) {
                     _message.print(WARNING, "command-line: filename missing: not redirecting error messages");
                 } else {
                     strncpy(errfilename, arg, namelen);
-                    _message.print(D_BUG, "command-line: redirecting error messages to \"%s\"", errfilename);
+                    _message.print(DBUG, "command-line: redirecting error messages to \"%s\"", errfilename);
                     _message.setErrorFile(fopen(errfilename, "w"));
                 }
             } else if (strcmp(opt, "--messages") == 0  || strcmp(opt, "-M") == 0) {
@@ -112,7 +112,7 @@ void Shell::processArgs(int argc, char *argv[]) {
                     _message.print(WARNING, "command-line: message level '%s' invalid: setting to %d", arg, _message.getProcessLevel());
                 } else {
                     MessageLevel l = (MessageLevel)atoi(arg);
-                    if (l < SILENT || l > D_BUG) {
+                    if (l < SILENT || l > DBUG) {
                     _message.print(WARNING, "command-line: message level %d out of range: setting to %d", l, _message.getProcessLevel());
                     } else {
                         _message.setProcessLevel((MessageLevel)l);
@@ -137,13 +137,13 @@ void Shell::processArgs(int argc, char *argv[]) {
                 banner();
                 _message.print(PANIC, "command-line: unknown option: '%s'", argv[i]);
             }
-            _message.print(D_BUG, "command-line: processed option '%s'", argv[i]);
+            _message.print(DBUG, "command-line: processed option '%s'", argv[i]);
         } else if (srcfilename[0] == '\0') {
             strncpy(srcfilename, argv[i], namelen-1);
             srcfilename[namelen-1] = '\0';
             if (strncmp(srcfilename+strlen(srcfilename)-strlen(EXT), EXT, strlen(EXT)) != 0)
                 strncat(srcfilename, EXT, strlen(EXT));
-            _message.print(D_BUG, "command-line: processed filename \"%s\"", srcfilename);
+            _message.print(DBUG, "command-line: processed filename \"%s\"", srcfilename);
         } else {
             banner();
             _message.print(PANIC, "command-line: too many filenames");

@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Roshan Gautam. All rights reserved.
 //
 
-#include "Scanner.h"
+#include "scanner.h"
 
 
 int Scanner::setTabWidth(int t) {
@@ -110,7 +110,7 @@ void Scanner::read() {
             _buffer[0] = '\0';
             c = nextCh();
             if (peekCh() != '\'') {
-                _token.setTokenType(ERR_BADCHAR);
+                _token.setTokenType(ERR_BADINPUT);
                 _buffer[0] = peekCh();
                 _token.setLexeme(_buffer);
                 return;
@@ -173,7 +173,7 @@ void Scanner::read() {
         }
         _token.setLexeme(_buffer);
     }
-    _message.print(D_BUG, "scanner: Found %s", getToken().getFormattedLexeme());
+    _message.print(DBUG, "scanner: Found %s", getToken().getFormattedLexeme());
 }
 
 const char* Scanner::error() {

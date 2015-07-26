@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Roshan Gautam. All rights reserved.
 //
 
-#include "Shell.h"
+#include "shell.h"
 
 int main(int argc, char *argv[]) {
 
