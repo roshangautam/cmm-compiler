@@ -18,59 +18,77 @@ bool Parser::read() {
     return (_message.getErrorCount() == 0);
 }
 
-void Parser::TranslationUnit(){
+void Parser::TranslationUnit() {
     _message.print(DBUG, "parser: in TranslationUnit()");
     
     // fill in with tokens, -1 must be the last one!
-    static tokenType firstSet[] = {KW_EXTERN, KW_FLOAT, KW_INT, KW_VOID, (tokenType) - 1};
+    static tokenType firstSet[] = { KW_FLOAT, KW_INT, KW_VOID, (tokenType) - 1 };
 
+    // grammar
+    //    { [ “extern” ] TypeSpecifier, identifier,
+    //        ( [ “[”, integer, “]”],
+    //        { “,”, identifier, [ “[”, integer, “]” ] }, “;”
+    //         | “(”, [ Parameter, { “,”, Parameter } ], “)”,
+    //         CompoundStatement
+    //         )
+    //    }
     // fill in the rule here
-//    { [ “extern” ] TypeSpecifier, identifier,
-//        ( [ “[”, integer, “]”],
-//        { “,”, identifier, [ “[”, integer, “]” ] }, “;”
-//         | “(”, [ Parameter, { “,”, Parameter } ], “)”,
-//         CompoundStatement
-//         )
-//    }
-    while(memberOf(_lookAhead.getTokenType(), firstSet)){
+    
+    while(_lookAhead.getTokenType() == KW_EXTERN ||
+          memberOf(_lookAhead.getTokenType(), firstSet)) {
+        
+        if (_lookAhead.getTokenType() == KW_EXTERN)
+            match(KW_EXTERN);
         TypeSpecifier();
         match(TOK_IDENT);
-        if(_lookAhead.getTokenType() == SYM_SQ_OPEN){
-            if(_lookAhead.getTokenType() == SYM_SQ_OPEN){
+        
+        if(_lookAhead.getTokenType() == SYM_SQ_OPEN ||
+           _lookAhead.getTokenType() == SYM_COMMA ||
+           _lookAhead.getTokenType() == SYM_SEMICOLON) {
+            
+            if (_lookAhead.getTokenType() == SYM_SQ_OPEN) {
                 match(SYM_SQ_OPEN);
                 match(LIT_INT);
-                if(_lookAhead.getTokenType() == SYM_SQ_CLOSE){
+                if (_lookAhead.getTokenType() == SYM_SQ_CLOSE) {
                     match(SYM_SQ_CLOSE);
                 }
             }
-            while(_lookAhead.getTokenType() == SYM_COMMA){
+            
+            while(_lookAhead.getTokenType() == SYM_COMMA) {
                 match(SYM_COMMA);
                 match(TOK_IDENT);
-                if(_lookAhead.getTokenType() == SYM_SQ_OPEN){
+                if(_lookAhead.getTokenType() == SYM_SQ_OPEN) {
                     match(SYM_SQ_OPEN);
                     match(LIT_INT);
-                    if(_lookAhead.getTokenType() == SYM_SQ_CLOSE){
+                    if(_lookAhead.getTokenType() == SYM_SQ_CLOSE) {
                         match(SYM_SQ_CLOSE);
+                    } else {
+                        //illegal array
                     }
                 }
             }
-            if(_lookAhead.getTokenType() == SYM_SEMICOLON){
+            if(_lookAhead.getTokenType() == SYM_SEMICOLON) {
                 match(SYM_SEMICOLON);
             }
-        }
-        else if(_lookAhead.getTokenType() == SYM_OPEN){
+        } else if(_lookAhead.getTokenType() == SYM_OPEN) {
             match(SYM_OPEN);
-            if(memberOf(_lookAhead.getTokenType(), firstSet)){
+            if(memberOf(_lookAhead.getTokenType(), firstSet)) {
                 Parameter();
-                while(_lookAhead.getTokenType() == SYM_COMMA){
+                while(_lookAhead.getTokenType() == SYM_COMMA) {
                     match(SYM_COMMA);
                     Parameter();
                 }
             }
             if(_lookAhead.getTokenType() == SYM_CLOSE){
                 match(SYM_CLOSE);
-                CompoundStatement();
+                if(_lookAhead.getTokenType() == SYM_SEMICOLON) {
+                    match(SYM_SEMICOLON); // its a function declaration (prototype)
+                } else {
+                    CompoundStatement(); // its a function definition
+                }
             }
+        } else {
+            // something's not right
         }
     }
 }
