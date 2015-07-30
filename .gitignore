@@ -1,0 +1,4 @@
+*.xcworkspace
+!default.xcworkspace
+xcuserdata
+profile
