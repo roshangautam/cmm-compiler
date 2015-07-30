@@ -106,18 +106,6 @@ void Scanner::read() {
             }
             _buffer[strlen(_buffer)-1] = '\0';
             _token.setTokenType(LIT_STR);
-        } else if (c == '\'') {
-            _buffer[0] = '\0';
-            c = nextCh();
-            if (peekCh() != '\'') {
-                _token.setTokenType(ERR_BADINPUT);
-                _buffer[0] = peekCh();
-                _token.setLexeme(_buffer);
-                return;
-            }
-            c = nextCh();
-            _buffer[strlen(_buffer)-1] = '\0';
-            _token.setTokenType(LIT_CHAR);
         } else if (c == ',') {
             _token.setTokenType(SYM_COMMA);
         } else if (c == ';') {
@@ -182,6 +170,18 @@ void Scanner::read() {
             _token.setTokenType(SYM_CURLY_OPEN);
         } else if (c == '}') {
             _token.setTokenType(SYM_CURLY_CLOSE);
+        } else if (c == '\'') {
+            _buffer[0] = '\0';
+            c = nextCh();
+            if (peekCh() != '\'') {
+                _token.setTokenType(ERR_BADINPUT);
+                _buffer[0] = peekCh();
+                _token.setLexeme(_buffer);
+                return;
+            }
+            c = nextCh();
+            _buffer[strlen(_buffer)-1] = '\0';
+            _token.setTokenType(LIT_CHAR);
         } else {
             _token.setTokenType(ERR_BADINPUT);
         }

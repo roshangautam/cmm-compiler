@@ -35,7 +35,7 @@ void Parser::TranslationUnit() {
     //         )
     //    }
     
-    while (synchronized(translationUnitFirstSet, followSet, "Expecting TranslationUnit")) {
+    if (synchronized(translationUnitFirstSet, followSet, "Expecting TranslationUnit")) {
         if (_lookAhead.getTokenType() == KW_EXTERN)
             match(KW_EXTERN);
         TypeSpecifier();

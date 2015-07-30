@@ -102,16 +102,17 @@ class Parser {
             while (_lookAhead.getTokenType() != TOK_EOF &&
                    !memberOf(_lookAhead.getTokenType(), firstSet) &&
                    !memberOf(_lookAhead.getTokenType(), followSet)) {                
-                _scanner.read();
-                _lookAhead = _scanner.getToken();
+//                _scanner.read();
+//                _lookAhead = _scanner.getToken();
+                _lookAhead = getToken();
             }
             
-            if (!memberOf(_lookAhead.getTokenType(), firstSet)) {
+            if (!memberOf(_lookAhead.getTokenType(), firstSet))
                 synced = false;
-            }
         }
         return synced;
     }
+    
     
     void TranslationUnit();
     void TypeSpecifier();
@@ -141,6 +142,10 @@ public:
     
     Scanner getScanner() {
         return _scanner;
+    }
+    
+    Message getMessage() {
+        return _message;
     }
     
     bool read();
