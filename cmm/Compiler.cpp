@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     Parser parser = Parser(fin, shell.getTabWidthParam(), shell.getMessage());
     
     if (parser.read()) {
-        shell.getMessage().print(NORMAL, "%i lines processed: compile successful", parser.getScanner().getLinesRead());
+        shell.getMessage().print(NORMAL, "%i line%c processed: compile successful", parser.getScanner().getLinesRead(), parser.getScanner().getLinesRead() > 1 ? 's' : ' ' );
     } else {
         shell.getMessage().print(NORMAL, "%i errors: %i warnings: compile failed", parser.getMessage().getErrorCount(), parser.getMessage().getWarningCount());
     }

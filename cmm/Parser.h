@@ -95,16 +95,19 @@ class Parser {
         bool synced = true;
         if (!memberOf(_lookAhead.getTokenType(), firstSet)) {
             
-            _message.print(DBUG, "parser: synchronize: could not find %s", tokenTypeString[_lookAhead.getTokenType()]);
-            _message.print(ERROR, "line %i: col %i: parser: %s: found %s",
-                    _lookAhead.getRow(), _lookAhead.getCol(), errMsg, tokenTypeString[_lookAhead.getTokenType()]);
-            
+            if (_lookAhead.getTokenType() > TOK_EOF) {
+                
+                _message.print(DBUG, "parser: synchronize: could not find %s", tokenTypeString[_lookAhead.getTokenType()]);
+                _message.print(ERROR, "line %i: col %i: parser: %s: found %s",
+                               _lookAhead.getRow(), _lookAhead.getCol(), errMsg, tokenTypeString[_lookAhead.getTokenType()]);
+            }
+
             while (_lookAhead.getTokenType() != TOK_EOF &&
                    !memberOf(_lookAhead.getTokenType(), firstSet) &&
                    !memberOf(_lookAhead.getTokenType(), followSet)) {                
-//                _scanner.read();
-//                _lookAhead = _scanner.getToken();
-                _lookAhead = getToken();
+                _scanner.read();
+                _lookAhead = _scanner.getToken();
+//                _lookAhead = getToken();
             }
             
             if (!memberOf(_lookAhead.getTokenType(), firstSet))

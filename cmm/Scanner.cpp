@@ -18,7 +18,7 @@ int Scanner::getTabWidth() {
 }
 
 int Scanner::getLinesRead() {
-    return _token.getRow() - 1;
+    return _token.getRow();
 }
 
 void Scanner::read() {
