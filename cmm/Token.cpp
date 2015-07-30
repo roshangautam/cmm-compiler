@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Roshan Gautam. All rights reserved.
 //
 
-#include "Token.h"
+#include "token.h"
 
 
 void Token::setRow(int row) {
@@ -57,10 +57,7 @@ char* Token::getFormattedLexeme() {
     switch (_tokenType) {
             // ERRORS
         case ERR_BADINPUT:
-            sprintf(result, "ERROR<%d,%d>: Bad input found: \"0x%02x\"", _row, _col, _lexeme[0]);
-            break;
-        case ERR_BADCHAR:
-            sprintf(result, "ERROR<%d,%d>: Bad character found: \"0x%02x\"", _row, _col, _lexeme[0]);            
+            sprintf(result, "ERROR<%d,%d>: Unrecognized input found: \"0x%02x\"", _row, _col, _lexeme[0]);
             break;
         case ERR_BADSTR:
             sprintf(result, "ERROR<%d,%d>: Unterminated String found: \"%s...", _row, _col, _lexeme);
@@ -181,8 +178,17 @@ char* Token::getFormattedLexeme() {
         case SYM_SQ_OPEN:
             sprintf(result, "SYMBOL<%d,%d>: \"[\"", _row, _col);
             break;
-        case SYM_EXCLAMATION:
+        case SYM_NOT:
             sprintf(result, "SYMBOL<%d,%d>: \"!\"", _row, _col);
+            break;
+        case SYM_AND:
+            sprintf(result, "SYMBOL<%d,%d>: \"&&\"", _row, _col);
+            break;
+        case SYM_OR:
+            sprintf(result, "SYMBOL<%d,%d>: \"||\"", _row, _col);
+            break;
+        case SYM_MOD:
+            sprintf(result, "SYMBOL<%d,%d>: %%", _row, _col);
             break;
         default:
             sprintf(result, "ERROR<%d,%d>:Unrecognized Token:\"%s\"", _row, _col, _lexeme);

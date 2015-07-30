@@ -15,7 +15,6 @@
 
 typedef enum {
     // errors
-    ERR_BADCHAR = -6,
     ERR_BADINPUT = -5,
     ERR_BADSTR = -4,
     ERR_BADFLOAT = -3,
@@ -55,23 +54,28 @@ typedef enum {
     SYM_GREATER_EQ,
     SYM_EQUAL,
     SYM_NOT_EQ,
-    SYM_ASSIGN,
     SYM_SEMICOLON,
+    SYM_ASSIGN,
     SYM_COMMA,
     SYM_SQ_OPEN,
     SYM_SQ_CLOSE,
     SYM_CURLY_OPEN,
     SYM_CURLY_CLOSE,
-    SYM_EXCLAMATION
+    SYM_NOT,
+    SYM_MOD,
+    SYM_AND,
+    SYM_OR,
     
 } tokenType;
+
 
 class Token { // Token Class
     tokenType _tokenType;      // the actual token value
     char _lexeme[MAX_LEXEME_LEN];  // the lexeme attribute
     int _row, _col;         // row and column of the lexeme
-public:
     
+public:
+        
     Token() { // default constructor
         _row = 0;
         _col = 0;

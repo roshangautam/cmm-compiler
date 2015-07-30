@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Roshan Gautam. All rights reserved.
 //
 
-#include "Scanner.h"
+#include "scanner.h"
 
 
 int Scanner::setTabWidth(int t) {
@@ -18,7 +18,7 @@ int Scanner::getTabWidth() {
 }
 
 int Scanner::getLinesRead() {
-    return _token.getRow() - 1;
+    return _token.getRow();
 }
 
 void Scanner::read() {
@@ -106,18 +106,6 @@ void Scanner::read() {
             }
             _buffer[strlen(_buffer)-1] = '\0';
             _token.setTokenType(LIT_STR);
-        } else if (c == '\'') {
-            _buffer[0] = '\0';
-            c = nextCh();
-            if (peekCh() != '\'') {
-                _token.setTokenType(ERR_BADCHAR);
-                _buffer[0] = peekCh();
-                _token.setLexeme(_buffer);
-                return;
-            }
-            c = nextCh();
-            _buffer[strlen(_buffer)-1] = '\0';
-            _token.setTokenType(LIT_CHAR);
         } else if (c == ',') {
             _token.setTokenType(SYM_COMMA);
         } else if (c == ';') {
@@ -130,6 +118,8 @@ void Scanner::read() {
             _token.setTokenType(SYM_MUL);
         } else if (c == '/') {
             _token.setTokenType(SYM_DIV);
+        } else if (c == '%') {
+            _token.setTokenType(SYM_MOD);
         } else if (c == '=') {
             if (peekCh() == '=') {
                 c = nextCh();
@@ -139,7 +129,7 @@ void Scanner::read() {
         } else if (c == '!') {
             if (peekCh() != '=') {
                 c = nextCh();
-                _token.setTokenType(SYM_EXCLAMATION);
+                _token.setTokenType(SYM_NOT);
             } else {
                 c = nextCh();
                 _token.setTokenType(SYM_NOT_EQ);
@@ -156,6 +146,18 @@ void Scanner::read() {
                 _token.setTokenType(SYM_GREATER_EQ);
             } else
                 _token.setTokenType(SYM_GREATER);
+        } else if (c == '&') {
+            if (peekCh() == '&') {
+                c = nextCh();
+                _token.setTokenType(SYM_AND);
+            } else
+                _token.setTokenType(ERR_BADINPUT);
+        } else if (c == '|') {
+            if (peekCh() == '|') {
+                c = nextCh();
+                _token.setTokenType(SYM_OR);
+            } else
+                _token.setTokenType(ERR_BADINPUT);
         } else if (c == '(') {
             _token.setTokenType(SYM_OPEN);
         } else if (c == ')') {
@@ -168,12 +170,24 @@ void Scanner::read() {
             _token.setTokenType(SYM_CURLY_OPEN);
         } else if (c == '}') {
             _token.setTokenType(SYM_CURLY_CLOSE);
+        } else if (c == '\'') {
+            _buffer[0] = '\0';
+            c = nextCh();
+            if (peekCh() != '\'') {
+                _token.setTokenType(ERR_BADINPUT);
+                _buffer[0] = peekCh();
+                _token.setLexeme(_buffer);
+                return;
+            }
+            c = nextCh();
+            _buffer[strlen(_buffer)-1] = '\0';
+            _token.setTokenType(LIT_CHAR);
         } else {
             _token.setTokenType(ERR_BADINPUT);
         }
         _token.setLexeme(_buffer);
     }
-    _message.print(D_BUG, "scanner: Found %s", getToken().getFormattedLexeme());
+    _message.print(DBUG, "SCANNER: Found %s", getToken().getFormattedLexeme());
 }
 
 const char* Scanner::error() {

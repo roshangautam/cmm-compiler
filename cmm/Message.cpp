@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Roshan Gautam. All rights reserved.
 //
 
-#include "Message.h"
+#include "message.h"
 
 
 void Message::print(MessageLevel messageLevel, const char *fmt, ...) {
@@ -25,7 +25,7 @@ void Message::print(MessageLevel messageLevel, const char *fmt, ...) {
             fprintf(_ferr, "WARNING: %s\n", msg);
         }
     } else if (messageLevel <= _processLevel) {
-        if (messageLevel == D_BUG) {
+        if (messageLevel == DBUG) {
             fprintf(_fdbg, "DEBUG: %s\n", msg);
         } else
             fprintf(stdout, "%s\n", msg);

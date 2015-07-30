@@ -5,5 +5,5 @@ A Simple Compiler written in C++ for language based on provided grammar for Grad
 
 - [Grammar] (https://github.com/roshangautam/cmm-compiler/blob/scanner/EBNF.pdf)
 - [Scanner] (https://github.com/roshangautam/cmm-compiler/tree/scanner)
-- [Parser]  - coming soon
+- [Parser]  (https://github.com/roshangautam/cmm-compiler/tree/parser)
 - [Semantic Analyzer] - coming soon

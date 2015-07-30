@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "Parser.h"
+#include "parser.h"
 
 #define name    "C-- Compiler"
 #define major_version	  "0"          /* version */
