@@ -8,6 +8,7 @@
 
 #include "shell.h"
 
+
 int main(int argc, char *argv[]) {
 
     FILE *fin;
@@ -33,7 +34,7 @@ int main(int argc, char *argv[]) {
     if (parser.read()) {
         shell.getMessage().print(NORMAL, "%i lines processed", parser.getScanner().getLinesRead());
     } else {
-        shell.getMessage().print(NORMAL, "%i errors: %i warnings: compile failed", shell.getMessage().getErrorCount(), shell.getMessage().getWarningCount());
+        shell.getMessage().print(NORMAL, "%i errors: %i warnings: compile failed", parser.getScanner().getMessage().getErrorCount(), parser.getScanner().getMessage().getWarningCount());
     }
     return 0;
 }

@@ -178,8 +178,17 @@ char* Token::getFormattedLexeme() {
         case SYM_SQ_OPEN:
             sprintf(result, "SYMBOL<%d,%d>: \"[\"", _row, _col);
             break;
-        case SYM_EXCLAMATION:
+        case SYM_NOT:
             sprintf(result, "SYMBOL<%d,%d>: \"!\"", _row, _col);
+            break;
+        case SYM_AND:
+            sprintf(result, "SYMBOL<%d,%d>: \"&&\"", _row, _col);
+            break;
+        case SYM_OR:
+            sprintf(result, "SYMBOL<%d,%d>: \"||\"", _row, _col);
+            break;
+        case SYM_MOD:
+            sprintf(result, "SYMBOL<%d,%d>: %%", _row, _col);
             break;
         default:
             sprintf(result, "ERROR<%d,%d>:Unrecognized Token:\"%s\"", _row, _col, _lexeme);

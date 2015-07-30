@@ -130,6 +130,8 @@ void Scanner::read() {
             _token.setTokenType(SYM_MUL);
         } else if (c == '/') {
             _token.setTokenType(SYM_DIV);
+        } else if (c == '%') {
+            _token.setTokenType(SYM_MOD);
         } else if (c == '=') {
             if (peekCh() == '=') {
                 c = nextCh();
@@ -139,7 +141,7 @@ void Scanner::read() {
         } else if (c == '!') {
             if (peekCh() != '=') {
                 c = nextCh();
-                _token.setTokenType(SYM_EXCLAMATION);
+                _token.setTokenType(SYM_NOT);
             } else {
                 c = nextCh();
                 _token.setTokenType(SYM_NOT_EQ);
@@ -156,6 +158,18 @@ void Scanner::read() {
                 _token.setTokenType(SYM_GREATER_EQ);
             } else
                 _token.setTokenType(SYM_GREATER);
+        } else if (c == '&') {
+            if (peekCh() == '&') {
+                c = nextCh();
+                _token.setTokenType(SYM_AND);
+            } else
+                _token.setTokenType(ERR_BADINPUT);
+        } else if (c == '|') {
+            if (peekCh() == '|') {
+                c = nextCh();
+                _token.setTokenType(SYM_OR);
+            } else
+                _token.setTokenType(ERR_BADINPUT);
         } else if (c == '(') {
             _token.setTokenType(SYM_OPEN);
         } else if (c == ')') {

@@ -13,12 +13,56 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "Scanner.h"
+#include "scanner.h"
+
 
 class Parser {
     Scanner _scanner;
     Message _message;
     Token _lookAhead;
+    
+    const char* tokenTypeString[36] = {
+        "EOF",
+        "identifier",
+        
+        "string literal",
+        "int literal",
+        "float literal",
+        "char literal",
+        
+        "keyword extern",
+        "keyword int",
+        "keyword float",
+        "keyword void",
+        "keyword if",
+        "keyword else",
+        "keyword while",
+        "keyword return",
+        
+        "symbol \"(\"",
+        "symbol \")\"",
+        "symbol \"+\"",
+        "symbol \"-\"",
+        "symbol \"*\"",
+        "symbol \"/\"",
+        "symbol \"<\"",
+        "symbol \"<=\"",
+        "symbol \">\"",
+        "symbol \">=\"",
+        "symbol \"==\"",
+        "symbol \"!=\"",
+        "symbol \";\"",
+        "symbol \"=\"",
+        "symbol \",\"",
+        "symbol \"[\"",
+        "symbol \"]\"",
+        "symbol \"{\"",
+        "symbol \"}\""
+        "symbol \"!\"",
+        "symbol \"%\"",
+        "symbol \"&&\"",
+        "symbol \"||\"",
+    };
     
     Token getToken() {
         _scanner.read();
@@ -30,12 +74,11 @@ class Parser {
     }
     
     void match(tokenType expected) {
-//        message(DEBUG, "parser: match: expecting %s", _scanner.tokenTypeString(expected));
+        _message.print(DBUG, "parser: match: expecting %s", tokenTypeString[expected]);
         if (_lookAhead.getTokenType() == expected)
             _lookAhead = getToken();
         else {
-//            message(ERROR, "line %i: col %i: parser: expecting %s: found %s",
-//                    lookAhead.getRow() , lookAhead.getCol(), tokenTypeString[expected], tokenTypeString[lookAhead.token]);
+            _message.print(ERROR, "line %i: col %i: parser: expecting %s: found %s", _lookAhead.getRow() , _lookAhead.getCol(), tokenTypeString[expected], tokenTypeString[_lookAhead.getTokenType()]);
         }
     }
 
@@ -47,40 +90,46 @@ class Parser {
         return found;
     }
     
-    void synchronize(tokenType* firstSet, tokenType* followSet,const char* errMsg) {
+    bool synchronized(tokenType* firstSet, tokenType* followSet,const char* errMsg) {
         _message.print(DBUG, "parser: synchronize: %s", errMsg);
+        bool synced = true;
         if (!memberOf(_lookAhead.getTokenType(), firstSet)) {
-//            message(DEBUG, "parser: synchronize: could not find %s", tokenTypeString[lookAhead.token]);
-//            message(ERROR, "line %i: col %i: parser: %s: found %s",
-//                    lookAhead.row, lookAhead.col, errMsg, tokenTypeString[lookAhead.token]);
-            while (_lookAhead.getTokenType() != TOK_EOF && !memberOf(_lookAhead.getTokenType(), firstSet) && !memberOf(_lookAhead.getTokenType(), followSet)) {
+            
+            _message.print(DBUG, "parser: synchronize: could not find %s", tokenTypeString[_lookAhead.getTokenType()]);
+            _message.print(ERROR, "line %i: col %i: parser: %s: found %s",
+                    _lookAhead.getRow(), _lookAhead.getCol(), errMsg, tokenTypeString[_lookAhead.getTokenType()]);
+            
+            while (_lookAhead.getTokenType() != TOK_EOF &&
+                   !memberOf(_lookAhead.getTokenType(), firstSet) &&
+                   !memberOf(_lookAhead.getTokenType(), followSet)) {                
                 _scanner.read();
                 _lookAhead = _scanner.getToken();
             }
+            
+            if (!memberOf(_lookAhead.getTokenType(), firstSet)) {
+                synced = false;
+            }
         }
-    }
-    
-    void resynchronize(tokenType* syncSet) {
-        while (_lookAhead.getTokenType() != TOK_EOF && !memberOf(_lookAhead.getTokenType(), syncSet)) {
-            _scanner.read();
-            _lookAhead = _scanner.getToken();
-        }
+        return synced;
     }
     
     void TranslationUnit();
     void TypeSpecifier();
     void Parameter();
     void CompoundStatement();
-    void Declarations();
-    void Statements();
+    void Declaration();
+    void Statement();
     void ExpressionStatement();
     void SelectionStatement();
     void RepetitionStatement();
     void ReturnStatement();
     void Expression();
+    void AndExpression();
+    void RelationExpression();
     void SimpleExpression();
     void Term();
     void Factor();
+    void Value();
     
 public:
     Parser(FILE *fin, int tabSize, Message message) {

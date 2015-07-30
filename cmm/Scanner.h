@@ -124,6 +124,10 @@ public:
         return _token;
     }
 
+    Message getMessage() {
+        return _message;
+    }
+    
     void read();
     const char *error();
     int getLinesRead();
