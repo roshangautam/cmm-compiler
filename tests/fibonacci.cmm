@@ -1,0 +1,25 @@
+
+int main() {
+	int n; // series count
+	n = 10;
+	fibonacci(n);
+	return 0;
+}
+
+void fibonacci() {
+	int first, second, next, c;
+	first = 0; // first number is always 0
+	second = 1; // second is always 1
+	c = 0 ; // counter
+	while( c < n) {
+		if( c <= 1) {
+			next = c;
+		} else {
+			next = first + second;
+			first = second;
+			second = next;
+		}
+		// print next
+	}
+	return;
+}

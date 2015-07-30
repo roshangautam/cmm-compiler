@@ -187,7 +187,7 @@ void Scanner::read() {
         }
         _token.setLexeme(_buffer);
     }
-    _message.print(DBUG, "scanner: Found %s", getToken().getFormattedLexeme());
+    _message.print(DBUG, "SCANNER: Found %s", getToken().getFormattedLexeme());
 }
 
 const char* Scanner::error() {
