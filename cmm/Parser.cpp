@@ -284,7 +284,8 @@ void Parser::Expression() {
     //    { “||”, AndExpression }
     
     static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
-    static tokenType followSet[] = {SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {SYM_CLOSE, SYM_SEMICOLON, SYM_SQ_CLOSE, SYM_COMMA, (tokenType) - 1};
+//    static tokenType followSet[] = {SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
     if(synchronized(firstSet, followSet, "expecting Expression")) {
         AndExpression();

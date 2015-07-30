@@ -78,7 +78,7 @@ class Parser {
         if (_lookAhead.getTokenType() == expected)
             _lookAhead = getToken();
         else {
-            _message.print(ERROR, "line %i: col %i: parser: expecting %s: found %s", _lookAhead.getRow() , _lookAhead.getCol(), tokenTypeString[expected], tokenTypeString[_lookAhead.getTokenType()]);
+            _message.print(ERROR, "line %i: col %i: parser: match : expecting %s: found %s", _lookAhead.getRow() , _lookAhead.getCol(), tokenTypeString[expected], tokenTypeString[_lookAhead.getTokenType()]);
         }
     }
 
