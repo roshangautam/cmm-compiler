@@ -1,25 +1,28 @@
-return a;
+
 int main() {
-	int n = 10; // series count
+	int n ; // series count
 	// n = 10;
 	fibonacci(n);
-	return 0;
+	return int a;  // THIS IS AN ERROR - CANT HAVE TYPE IN RETURN STATEMENT -- ERROR 1
 }
 
 void fibonacci() {
-	int first, second = 0, next, c;
+	int first, second , next, c  // THIS IS AN ERROR - MISSING SEMICOLON  -- ERROR 2
 	first = 0; // first number is always 0
 	second = 1; // second is always 1
 	c = 0 ; // counter
-	while( c < n) {
+	while() {  // THIS IS AN ERROR - MISSING EXPRESSION FOR WHILE -- ERROR 3
 		if( c <= 1) {
 			next = c;
-		} else {
+		} else // MISSING OPENING SCOPE BUT THIS IS NOT AN ERROR AS ELSE CAN BE SINGLE LINER
 			next = first + second;
 			first = second;
 			second = next;
-		}
+		}  // BECAUSE OF THE MISSING OPENING SCOPE THIS IS NOW THE END OF WHILE
 		// print next
-	}
-	return int;
+	}  // AND THIS WILL BE THE END OF FUNCTION
+	return 0;  // NOW EXPECTING ANOTHER TRANSLATIONUNIT  -- ERROR 4
 }
+
+
+// TOTAL ERRORS 4 AND NOT 5

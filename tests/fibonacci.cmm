@@ -23,3 +23,6 @@ void fibonacci() {
 	}
 	return;
 }
+
+
+// NO ERRORS IN THE CODE MUST COMPILE SUCCESSFULLY
