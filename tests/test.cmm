@@ -1,0 +1,20 @@
+int a;
+
+void main(int a, int b) {
+
+int c[1] , a[1], b;
+float b[], d[ ; // 2 ERRORS - MISSING LITERAL AND MISSING CLOSE BRACKET
+
+c = a + ; // ERROR - MISSING TERM
+
+return a // ERROR - MISSING SEMICOLON
+
+return int a; // ERROR - RETURN TYPE CANT HAVE TYPE
+
+// ERROR  - MISSING SCOPE FOR COMPOUND STATEMENT
+
+
+// TOTAL ERRORS 6
+
+
+

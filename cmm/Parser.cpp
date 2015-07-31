@@ -104,6 +104,7 @@ void Parser::TranslationUnit() {
             }
         }
     }
+    _message.print(DBUG, "PARSER: End of TranslationUnit()\n");
 }
 
 void Parser::TypeSpecifier() {
@@ -127,6 +128,7 @@ void Parser::TypeSpecifier() {
             match(KW_VOID);
         }
     }
+    _message.print(DBUG, "PARSER: End of TypeSpecifier()\n");
 }
 
 void Parser::Parameter() {
@@ -142,7 +144,7 @@ void Parser::Parameter() {
     if ( synchronized(firstSet, followSet, "Expected Parameter") ) {
         
         TypeSpecifier();
-        
+    
         match(TOK_IDENT);
         
         if ( _lookAhead.getTokenType() == SYM_SQ_OPEN ) {
@@ -152,6 +154,7 @@ void Parser::Parameter() {
             }
         }
     }
+    _message.print(DBUG, "PARSER: End of Parameter()\n");
 }
 
 void Parser::CompoundStatement() {
@@ -164,9 +167,9 @@ void Parser::CompoundStatement() {
     
     static tokenType declarationFirstSet[] = {KW_VOID, KW_INT, KW_FLOAT, (tokenType) - 1};
     
-    static tokenType statementFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType statementFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
-    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, KW_VOID, KW_INT, KW_FLOAT, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     if ( synchronized(compoundStatementFirstSet, followSet, "Expected Compound Statement") ) {
         
@@ -180,13 +183,13 @@ void Parser::CompoundStatement() {
             } else if ( memberOf(_lookAhead.getTokenType(), statementFirstSet) ) {
                 Statement();
             }
-            
         }
-        
         if (_lookAhead.getTokenType() == SYM_CURLY_CLOSE) {
             match(SYM_CURLY_CLOSE);            
         }
+
     }
+    _message.print(DBUG, "PARSER: End of CompoundStatement()\n");
 }
 
 void Parser::Declaration() {
@@ -198,7 +201,7 @@ void Parser::Declaration() {
     
     static tokenType firstSet[] = {KW_FLOAT, KW_INT, KW_VOID, (tokenType) -1};
     
-    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, KW_VOID, KW_INT, KW_FLOAT, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
 
     if ( synchronized(firstSet, followSet, "Expected Declaration") ) {
         
@@ -209,10 +212,7 @@ void Parser::Declaration() {
             
             match(SYM_SQ_OPEN);
             match(LIT_INT);
-            
-            if (_lookAhead.getTokenType() == SYM_SQ_CLOSE) {
-                match(SYM_SQ_CLOSE);
-            }
+            match(SYM_SQ_CLOSE);
         }
         
         while ( _lookAhead.getTokenType() == SYM_COMMA ) {
@@ -221,18 +221,16 @@ void Parser::Declaration() {
             match(TOK_IDENT);
             
             if ( _lookAhead.getTokenType() == SYM_SQ_OPEN ) {
+                
                 match(SYM_SQ_OPEN);
                 match(LIT_INT);
-                if( _lookAhead.getTokenType() == SYM_SQ_CLOSE ) {
-                    match(SYM_SQ_CLOSE);
-                }
+                match(SYM_SQ_CLOSE);
             }
         }
         
-        if (_lookAhead.getTokenType() == SYM_SEMICOLON) {
-            match(SYM_SEMICOLON);
-        }
+        match(SYM_SEMICOLON);
     }
+    _message.print(DBUG, "PARSER: End of Declaration()\n");
 }
 
 void Parser::Statement() {
@@ -245,9 +243,9 @@ void Parser::Statement() {
     //    | RepetitionStatement
     //    | ReturnStatement
     
-    static tokenType statementFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType statementFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, SYM_SEMICOLON, (tokenType) - 1};
 
-    static tokenType followSet[] = {SYM_CURLY_CLOSE, KW_ELSE, (tokenType) - 1};
+    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, KW_VOID, KW_INT, KW_FLOAT, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     if ( synchronized(statementFirstSet, followSet, "Expected Statement") ) {
         if ( _lookAhead.getTokenType() == SYM_CURLY_OPEN ) {
@@ -262,6 +260,7 @@ void Parser::Statement() {
             ExpressionStatement();
         }
     }
+    _message.print(DBUG, "PARSER: End of Statement()\n");
 }
 
 void Parser::ExpressionStatement() {
@@ -270,9 +269,9 @@ void Parser::ExpressionStatement() {
     
     //    [ Expression, [ “=”, Expression ] ], “;”
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, SYM_SEMICOLON, TOK_IDENT, (tokenType) - 1};
     
-    static tokenType followSet[] = {SYM_CURLY_CLOSE, KW_ELSE, (tokenType) - 1};
+    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, KW_VOID, KW_INT, KW_FLOAT, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Expression Statement") ) {
         
@@ -284,9 +283,9 @@ void Parser::ExpressionStatement() {
         }
     }
     
-    if (_lookAhead.getTokenType() == SYM_SEMICOLON) {
-        match(SYM_SEMICOLON);
-    }
+    match(SYM_SEMICOLON);
+    
+    _message.print(DBUG, "PARSER: End of ExpressionStatement()\n");
 }
 
 void Parser::SelectionStatement() {
@@ -297,7 +296,7 @@ void Parser::SelectionStatement() {
     
     static tokenType firstSet[] = {KW_IF, (tokenType) - 1};
     
-    static tokenType followSet[] = {SYM_CURLY_CLOSE, KW_ELSE, (tokenType) - 1};
+    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, KW_VOID, KW_INT, KW_FLOAT, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Selection Statement") ) {
         
@@ -316,6 +315,7 @@ void Parser::SelectionStatement() {
         }
         
     }
+    _message.print(DBUG, "PARSER: End of SelectionStatement()\n");
 }
 
 void Parser::RepetitionStatement() {
@@ -325,7 +325,8 @@ void Parser::RepetitionStatement() {
     //    “while”, “(”, Expression, “)”, Statement
     
     static tokenType firstSet[] = {KW_WHILE, (tokenType) - 1};
-    static tokenType followSet[] = {SYM_CURLY_CLOSE, KW_ELSE, (tokenType) - 1};
+    
+    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, KW_VOID, KW_INT, KW_FLOAT, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Repetition Statement") ) {
         
@@ -336,6 +337,8 @@ void Parser::RepetitionStatement() {
         Statement();
         
     }
+    
+    _message.print(DBUG, "PARSER: End of RepetitionStatement()\n");
 }
 
 void Parser::ReturnStatement() {
@@ -346,9 +349,9 @@ void Parser::ReturnStatement() {
     
     static tokenType firstSet[] = {KW_RETURN, (tokenType) - 1};
     
-    static tokenType expressionFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType expressionFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
-    static tokenType followSet[] = {SYM_CURLY_CLOSE, KW_ELSE, (tokenType) - 1};
+    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, KW_VOID, KW_INT, KW_FLOAT, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Return Statement") ) {
         
@@ -358,10 +361,9 @@ void Parser::ReturnStatement() {
             Expression();
         }
         
-        if (_lookAhead.getTokenType() == SYM_SEMICOLON) {
-            match(SYM_SEMICOLON);
-        }
+        match(SYM_SEMICOLON);
     }
+    _message.print(DBUG, "PARSER: End of ReturnStatement()\n");
 }
 
 void Parser::Expression() {
@@ -371,7 +373,7 @@ void Parser::Expression() {
     //    AndExpression,
     //    { “||”, AndExpression }
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     static tokenType followSet[] = {SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
@@ -384,6 +386,7 @@ void Parser::Expression() {
             AndExpression();
         }
     }
+    _message.print(DBUG, "PARSER: End of Expression()\n");
 }
 
 void Parser::AndExpression() {
@@ -393,7 +396,7 @@ void Parser::AndExpression() {
     //    RelationExpression,
     //    { “&&”, RelationExpression }
 
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     static tokenType followSet[] = {SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
 
     if ( synchronized(firstSet, followSet, "Expected AND Expression") ) {
@@ -404,6 +407,7 @@ void Parser::AndExpression() {
             RelationExpression();
         }
     }
+    _message.print(DBUG, "PARSER: End of AndExpression()\n");
 }
 
 void Parser::RelationExpression() {
@@ -414,7 +418,7 @@ void Parser::RelationExpression() {
     //    [ ( “<=” | “<” | “>=” | “>” | “==” | “!=” ),
     //     SimpleExpression ]
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     static tokenType followSet[] = {SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
@@ -444,7 +448,7 @@ void Parser::RelationExpression() {
             
         }
     }
-
+    _message.print(DBUG, "PARSER: End of RelationExpression()\n");
 }
 
 void Parser::SimpleExpression() {
@@ -453,7 +457,7 @@ void Parser::SimpleExpression() {
 
     //    Term, { ( “+” | ”-“ ), Term }
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     static tokenType followSet[] = {SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
 
@@ -473,6 +477,7 @@ void Parser::SimpleExpression() {
             Term();
         }
     }
+    _message.print(DBUG, "PARSER: End of SimpleExpression()\n");
 }
 
 void Parser::Term() {
@@ -481,9 +486,9 @@ void Parser::Term() {
     
     //Factor, { ( “*” | ”/” | “%” ), Factor }
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
 
-    static tokenType followSet[] = {SYM_PLUS, SYM_MINUS, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Term") ) {
         
@@ -504,6 +509,7 @@ void Parser::Term() {
             Factor();
         }
     }
+    _message.print(DBUG, "PARSER: End of Term()\n");
 }
 
 void Parser::Factor() {
@@ -512,9 +518,9 @@ void Parser::Factor() {
     
     //[ “+” | “-“ ], Value
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
-    static tokenType followSet[] = {SYM_MUL, SYM_DIV, SYM_MOD, SYM_PLUS, SYM_MINUS, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {SYM_MUL, SYM_DIV, SYM_MOD, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Factor") ) {
         
@@ -526,7 +532,7 @@ void Parser::Factor() {
         
         Value();
     }
- 
+     _message.print(DBUG, "PARSER: End of Factor()\n");
 }
 
 void Parser::Value() {
@@ -541,9 +547,9 @@ void Parser::Value() {
     
     static tokenType firstSet[] = {SYM_OPEN, TOK_IDENT, LIT_INT, LIT_FLOAT, LIT_STR, (tokenType) - 1};
 
-    static tokenType expressionFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType expressionFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
-    static tokenType followSet[] = {SYM_MUL, SYM_DIV, SYM_MOD, SYM_PLUS, SYM_MINUS, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {SYM_MUL, SYM_DIV, SYM_MOD, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Value") ) {
         
@@ -588,4 +594,5 @@ void Parser::Value() {
             match(LIT_STR);
         }
     }
+     _message.print(DBUG, "PARSER: End of Value()\n");
 }

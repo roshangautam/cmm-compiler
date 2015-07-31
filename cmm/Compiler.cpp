@@ -33,8 +33,11 @@ int main(int argc, char *argv[]) {
     
     if (parser.read()) {
         shell.getMessage().print(NORMAL, "%i line%c processed: compile successful", parser.getScanner().getLinesRead(), parser.getScanner().getLinesRead() > 1 ? 's' : ' ' );
+
     } else {
         shell.getMessage().print(NORMAL, "%i errors: %i warnings: compile failed", parser.getMessage().getErrorCount(), parser.getMessage().getWarningCount());
     }
+    
     return 0;
+
 }
