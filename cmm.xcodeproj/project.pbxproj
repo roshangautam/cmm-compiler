@@ -40,6 +40,11 @@
 		E94AFEA01B5BE2F00065708E /* shell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shell.h; sourceTree = "<group>"; };
 		E94AFEA11B5BE2F00065708E /* token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = token.cpp; sourceTree = "<group>"; };
 		E94AFEA21B5BE2F00065708E /* token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = token.h; sourceTree = "<group>"; };
+		E98515EE1B6B23DE0038556B /* EBNF C--.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "EBNF C--.pdf"; sourceTree = "<group>"; };
+		E98515EF1B6B23DE0038556B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E98515F11B6B23DE0038556B /* broken-fibonacci.cmm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "broken-fibonacci.cmm"; sourceTree = "<group>"; };
+		E98515F21B6B23DE0038556B /* fibonacci.cmm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fibonacci.cmm; sourceTree = "<group>"; };
+		E98515F41B6B23FF0038556B /* test.cmm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.cmm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +61,9 @@
 		E94AFE851B5BE2E30065708E = {
 			isa = PBXGroup;
 			children = (
+				E98515EE1B6B23DE0038556B /* EBNF C--.pdf */,
+				E98515EF1B6B23DE0038556B /* README.md */,
+				E98515F01B6B23DE0038556B /* tests */,
 				E94AFE901B5BE2E30065708E /* cmm */,
 				E94AFE8F1B5BE2E30065708E /* Products */,
 			);
@@ -85,6 +93,16 @@
 				E94AFEA21B5BE2F00065708E /* token.h */,
 			);
 			path = cmm;
+			sourceTree = "<group>";
+		};
+		E98515F01B6B23DE0038556B /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				E98515F11B6B23DE0038556B /* broken-fibonacci.cmm */,
+				E98515F21B6B23DE0038556B /* fibonacci.cmm */,
+				E98515F41B6B23FF0038556B /* test.cmm */,
+			);
+			path = tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,6 +253,9 @@
 		E94AFE961B5BE2E40065708E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -242,6 +263,9 @@
 		E94AFE971B5BE2E40065708E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

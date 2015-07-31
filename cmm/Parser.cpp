@@ -164,9 +164,9 @@ void Parser::CompoundStatement() {
     
     static tokenType declarationFirstSet[] = {KW_VOID, KW_INT, KW_FLOAT, (tokenType) - 1};
     
-    static tokenType statementFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType statementFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
-    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {TOK_EOF, KW_ELSE, SYM_CURLY_CLOSE, (tokenType) - 1}; 
     
     if ( synchronized(compoundStatementFirstSet, followSet, "Expected Compound Statement") ) {
         
@@ -245,7 +245,7 @@ void Parser::Statement() {
     //    | RepetitionStatement
     //    | ReturnStatement
     
-    static tokenType statementFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType statementFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_CURLY_OPEN, KW_IF, KW_WHILE, KW_RETURN, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, SYM_SEMICOLON, (tokenType) - 1};
 
     static tokenType followSet[] = {SYM_CURLY_CLOSE, KW_ELSE, (tokenType) - 1};
     
@@ -270,7 +270,7 @@ void Parser::ExpressionStatement() {
     
     //    [ Expression, [ “=”, Expression ] ], “;”
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, SYM_SEMICOLON, TOK_IDENT, (tokenType) - 1};
     
     static tokenType followSet[] = {SYM_CURLY_CLOSE, KW_ELSE, (tokenType) - 1};
     
@@ -346,7 +346,7 @@ void Parser::ReturnStatement() {
     
     static tokenType firstSet[] = {KW_RETURN, (tokenType) - 1};
     
-    static tokenType expressionFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType expressionFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     static tokenType followSet[] = {SYM_CURLY_CLOSE, KW_ELSE, (tokenType) - 1};
     
@@ -371,7 +371,7 @@ void Parser::Expression() {
     //    AndExpression,
     //    { “||”, AndExpression }
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     static tokenType followSet[] = {SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
@@ -393,7 +393,7 @@ void Parser::AndExpression() {
     //    RelationExpression,
     //    { “&&”, RelationExpression }
 
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     static tokenType followSet[] = {SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
 
     if ( synchronized(firstSet, followSet, "Expected AND Expression") ) {
@@ -414,7 +414,7 @@ void Parser::RelationExpression() {
     //    [ ( “<=” | “<” | “>=” | “>” | “==” | “!=” ),
     //     SimpleExpression ]
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     static tokenType followSet[] = {SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
@@ -453,7 +453,7 @@ void Parser::SimpleExpression() {
 
     //    Term, { ( “+” | ”-“ ), Term }
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
     static tokenType followSet[] = {SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
 
@@ -481,9 +481,9 @@ void Parser::Term() {
     
     //Factor, { ( “*” | ”/” | “%” ), Factor }
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
 
-    static tokenType followSet[] = {SYM_PLUS, SYM_MINUS, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Term") ) {
         
@@ -512,9 +512,9 @@ void Parser::Factor() {
     
     //[ “+” | “-“ ], Value
     
-    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType firstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
-    static tokenType followSet[] = {SYM_MUL, SYM_DIV, SYM_MOD, SYM_PLUS, SYM_MINUS, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {SYM_MUL, SYM_DIV, SYM_MOD, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Factor") ) {
         
@@ -541,9 +541,9 @@ void Parser::Value() {
     
     static tokenType firstSet[] = {SYM_OPEN, TOK_IDENT, LIT_INT, LIT_FLOAT, LIT_STR, (tokenType) - 1};
 
-    static tokenType expressionFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
+    static tokenType expressionFirstSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_OPEN, LIT_INT, LIT_FLOAT, LIT_STR, TOK_IDENT, (tokenType) - 1};
     
-    static tokenType followSet[] = {SYM_MUL, SYM_DIV, SYM_MOD, SYM_PLUS, SYM_MINUS, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
+    static tokenType followSet[] = {SYM_MUL, SYM_DIV, SYM_MOD, SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
     if ( synchronized(firstSet, followSet, "Expected Value") ) {
         
