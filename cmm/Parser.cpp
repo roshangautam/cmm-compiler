@@ -75,9 +75,7 @@ void Parser::TranslationUnit() {
                 }
             }
             
-            if (_lookAhead.getTokenType() == SYM_SEMICOLON) {
-                match(SYM_SEMICOLON);
-            }
+            match(SYM_SEMICOLON);
 
         } else if ( _lookAhead.getTokenType() == SYM_OPEN ) { // FUNCTION DECLARATION OR DEFINITION
             
@@ -92,15 +90,13 @@ void Parser::TranslationUnit() {
                     Parameter();
                 }
             }
-            if ( _lookAhead.getTokenType() == SYM_CLOSE ) {
-                
-                match(SYM_CLOSE);
-                
-                if ( _lookAhead.getTokenType() == SYM_SEMICOLON ) {
-                    match(SYM_SEMICOLON); // FUNCTION DECLARATION
-                } else {
-                    CompoundStatement(); // FUNCTION DEFINITION
-                }
+            
+            match(SYM_CLOSE);
+            
+            if ( _lookAhead.getTokenType() == SYM_SEMICOLON ) {
+                match(SYM_SEMICOLON); // FUNCTION DECLARATION
+            } else {
+                CompoundStatement(); // FUNCTION DEFINITION
             }
         }
     }
@@ -149,9 +145,7 @@ void Parser::Parameter() {
         
         if ( _lookAhead.getTokenType() == SYM_SQ_OPEN ) {
             match(SYM_SQ_OPEN);
-            if (_lookAhead.getTokenType() == SYM_SQ_CLOSE) {
-                match(SYM_SQ_CLOSE);
-            }
+            match(SYM_SQ_CLOSE);
         }
     }
     _message.print(DBUG, "PARSER: End of Parameter()\n");
@@ -184,9 +178,7 @@ void Parser::CompoundStatement() {
                 Statement();
             }
         }
-        if (_lookAhead.getTokenType() == SYM_CURLY_CLOSE) {
-            match(SYM_CURLY_CLOSE);            
-        }
+        match(SYM_CURLY_CLOSE);            
 
     }
     _message.print(DBUG, "PARSER: End of CompoundStatement()\n");
@@ -281,9 +273,10 @@ void Parser::ExpressionStatement() {
             match(SYM_ASSIGN);
             Expression();
         }
+        
+        match(SYM_SEMICOLON);
     }
     
-    match(SYM_SEMICOLON);
     
     _message.print(DBUG, "PARSER: End of ExpressionStatement()\n");
 }
@@ -303,11 +296,8 @@ void Parser::SelectionStatement() {
         match(KW_IF);
         match(SYM_OPEN);
         Expression();
-
-        if (_lookAhead.getTokenType() == SYM_CLOSE) {
-            match(SYM_CLOSE);
-            Statement();
-        }
+        match(SYM_CLOSE);
+        Statement();
         
         if (_lookAhead.getTokenType() == KW_ELSE) {
             match(KW_ELSE);
