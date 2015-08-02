@@ -14,9 +14,10 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "scanner.h"
-
+#include "symbolTable.h"
 
 class Parser {
+    
     Scanner _scanner;
     Message _message;
     Token _lookAhead;
