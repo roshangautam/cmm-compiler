@@ -13,6 +13,7 @@
 		E94AFEA61B5BE2F00065708E /* scanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E94AFE9D1B5BE2F00065708E /* scanner.cpp */; };
 		E94AFEA71B5BE2F00065708E /* shell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E94AFE9F1B5BE2F00065708E /* shell.cpp */; };
 		E94AFEA81B5BE2F00065708E /* token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E94AFEA11B5BE2F00065708E /* token.cpp */; };
+		E98515FD1B6D963F0038556B /* symbolTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E98515FB1B6D963F0038556B /* symbolTable.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +46,8 @@
 		E98515F11B6B23DE0038556B /* broken-fibonacci.cmm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "broken-fibonacci.cmm"; sourceTree = "<group>"; };
 		E98515F21B6B23DE0038556B /* fibonacci.cmm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fibonacci.cmm; sourceTree = "<group>"; };
 		E98515F41B6B23FF0038556B /* test.cmm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.cmm; sourceTree = "<group>"; };
+		E98515FB1B6D963F0038556B /* symbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = symbolTable.cpp; sourceTree = "<group>"; };
+		E98515FC1B6D963F0038556B /* symbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symbolTable.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +94,8 @@
 				E94AFEA01B5BE2F00065708E /* shell.h */,
 				E94AFEA11B5BE2F00065708E /* token.cpp */,
 				E94AFEA21B5BE2F00065708E /* token.h */,
+				E98515FB1B6D963F0038556B /* symbolTable.cpp */,
+				E98515FC1B6D963F0038556B /* symbolTable.h */,
 			);
 			path = cmm;
 			sourceTree = "<group>";
@@ -166,6 +171,7 @@
 				E94AFEA71B5BE2F00065708E /* shell.cpp in Sources */,
 				E94AFEA81B5BE2F00065708E /* token.cpp in Sources */,
 				E94AFEA41B5BE2F00065708E /* message.cpp in Sources */,
+				E98515FD1B6D963F0038556B /* symbolTable.cpp in Sources */,
 				E94AFEA61B5BE2F00065708E /* scanner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
