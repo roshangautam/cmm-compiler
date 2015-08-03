@@ -29,7 +29,9 @@ int main(int argc, char *argv[]) {
         shell.getMessage().print(VERBOSE, "compiler: reading from source file \"%s\"", shell.getSourceFilename());
     }
     
-    Parser parser = Parser(fin, shell.getTabWidthParam(), shell.getMessage());
+    SymbolTable symbolTable = SymbolTable(shell.getMessage());
+    
+    Parser parser = Parser(fin, shell.getTabWidthParam(), &symbolTable, shell.getMessage());
     
     if (parser.read()) {
         shell.getMessage().print(NORMAL, "%i line%c processed: compile successful", parser.getScanner().getLinesRead(), parser.getScanner().getLinesRead() > 1 ? 's' : ' ' );

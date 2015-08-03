@@ -21,6 +21,7 @@ class Parser {
     Scanner _scanner;
     Message _message;
     Token _lookAhead;
+    SymbolTable *_symbolTable;
     
     const char* tokenTypeString[37] = {
         "EOF",
@@ -116,14 +117,14 @@ class Parser {
     }    
     
     void TranslationUnit();
-    void TypeSpecifier();
+    string TypeSpecifier();
     void Parameter();
-    void CompoundStatement();
+    void CompoundStatement(string functionName);
     void Declaration();
-    void Statement();
+    void Statement(string functionName);
     void ExpressionStatement();
-    void SelectionStatement();
-    void RepetitionStatement();
+    void SelectionStatement(string functionName);
+    void RepetitionStatement(string functionName);
     void ReturnStatement();
     void Expression();
     void AndExpression();
@@ -134,9 +135,10 @@ class Parser {
     void Value();
     
 public:
-    Parser(FILE *fin, int tabSize, Message message) {
+    Parser(FILE *fin, int tabSize, SymbolTable *symbolTable, Message message) {
+        _symbolTable = symbolTable;
         _message = message;
-        _message.print(DBUG, "PARSER: Initialized");        
+        _message.print(DBUG, "PARSER: Initialized");
         _scanner = Scanner(fin, message);
         _scanner.setTabWidth(tabSize);
     }

@@ -11,7 +11,7 @@
 
 bool Parser::read() {  // Augmented Rule for Grammar
     _message.print(DBUG, "PARSER: In AugmentedRule()\n");
-    
+
     _lookAhead = getToken();
     
     TranslationUnit();
@@ -40,12 +40,24 @@ void Parser::TranslationUnit() {
     //         )
     //    }
     
+    bool externDef = false; // extern keyword protection
+    string type; // identifier type information container
+    string functionName; // identifier attribute for functions
     while ( synchronized(translationUnitFirstSet, followSet, "Expected TranslationUnit") ) {
         
-        if ( _lookAhead.getTokenType() == KW_EXTERN )
+        if ( _lookAhead.getTokenType() == KW_EXTERN ) {
             match(KW_EXTERN);
+            externDef = true;
+        }
         
-        TypeSpecifier();
+        type = TypeSpecifier();
+
+        if (_lookAhead.getTokenType() == TOK_IDENT) {
+            if(!_symbolTable->define(_lookAhead.getLexeme(), type))
+                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
+            
+        }
+        
         match(TOK_IDENT);
         
         if( _lookAhead.getTokenType() == SYM_SQ_OPEN ||
@@ -64,6 +76,15 @@ void Parser::TranslationUnit() {
             while ( _lookAhead.getTokenType() == SYM_COMMA ) {
                 
                 match(SYM_COMMA);
+                
+                if (_symbolTable->isDefined(_lookAhead.getLexeme())) {
+                    _symbolTable->define(_lookAhead.getLexeme(), "");
+                }
+                
+                if (_lookAhead.getTokenType() == TOK_IDENT)
+                    if(!_symbolTable->define(_lookAhead.getLexeme(), ""))
+                        _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
+                
                 match(TOK_IDENT);
                 
                 if( _lookAhead.getTokenType() == SYM_SQ_OPEN ) {
@@ -78,7 +99,7 @@ void Parser::TranslationUnit() {
             match(SYM_SEMICOLON);
 
         } else if ( _lookAhead.getTokenType() == SYM_OPEN ) { // FUNCTION DECLARATION OR DEFINITION
-            
+            _symbolTable->openScope();
             match(SYM_OPEN);
             
             if ( memberOf(_lookAhead.getTokenType(), parameterFirstSet) ) {
@@ -93,18 +114,23 @@ void Parser::TranslationUnit() {
             
             match(SYM_CLOSE);
             
-            if ( _lookAhead.getTokenType() == SYM_SEMICOLON ) {
+            if ( _lookAhead.getTokenType() == SYM_SEMICOLON )
                 match(SYM_SEMICOLON); // FUNCTION DECLARATION
-            } else {
-                CompoundStatement(); // FUNCTION DEFINITION
+            else {
+                if (externDef) {
+                    _message.print(ERROR, "Extern on internal function defintionz");
+                }
+                CompoundStatement(functionName); // FUNCTION DEFINITION
             }
+            _symbolTable->closeScope();
         }
     }
     _message.print(DBUG, "PARSER: End of TranslationUnit()\n");
 }
 
-void Parser::TypeSpecifier() {
+string Parser::TypeSpecifier() {
 
+    string type = "";
     _message.print(DBUG, "PARSER: In TypeSpecifier()\n");
     
     //    “void”
@@ -118,13 +144,18 @@ void Parser::TypeSpecifier() {
     if ( synchronized(firstSet, followSet, "Expected TypeSpecifier") ) {
         if ( _lookAhead.getTokenType() == KW_FLOAT ) {
             match(KW_FLOAT);
+            type = "f";
         } else if ( _lookAhead.getTokenType() == KW_INT ) {
             match(KW_INT);
+            type = "i";
         } else if ( _lookAhead.getTokenType() == KW_VOID ) {
             match(KW_VOID);
+            type = "v";
         }
     }
     _message.print(DBUG, "PARSER: End of TypeSpecifier()\n");
+    
+    return type;
 }
 
 void Parser::Parameter() {
@@ -137,10 +168,16 @@ void Parser::Parameter() {
     
     static tokenType followSet[] = {SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
+    string type;
+    
     if ( synchronized(firstSet, followSet, "Expected Parameter") ) {
         
-        TypeSpecifier();
+        type = TypeSpecifier();
     
+        if (_lookAhead.getTokenType() == TOK_IDENT)
+            if(!_symbolTable->define(_lookAhead.getLexeme(), type))
+                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
+        
         match(TOK_IDENT);
         
         if ( _lookAhead.getTokenType() == SYM_SQ_OPEN ) {
@@ -151,7 +188,7 @@ void Parser::Parameter() {
     _message.print(DBUG, "PARSER: End of Parameter()\n");
 }
 
-void Parser::CompoundStatement() {
+void Parser::CompoundStatement(string functionName) {
 
     _message.print(DBUG, "PARSER: In CompoundStatement()\n");
     
@@ -175,7 +212,7 @@ void Parser::CompoundStatement() {
             if ( memberOf(_lookAhead.getTokenType(), declarationFirstSet) ) {
                 Declaration();
             } else if ( memberOf(_lookAhead.getTokenType(), statementFirstSet) ) {
-                Statement();
+                Statement(functionName);
             }
         }
         match(SYM_CURLY_CLOSE);            
@@ -198,6 +235,11 @@ void Parser::Declaration() {
     if ( synchronized(firstSet, followSet, "Expected Declaration") ) {
         
         TypeSpecifier();
+        
+        if (_lookAhead.getTokenType() == TOK_IDENT)
+            if(!_symbolTable->define(_lookAhead.getLexeme(), ""))
+                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
+        
         match(TOK_IDENT);
         
         if ( _lookAhead.getTokenType() == SYM_SQ_OPEN ) {
@@ -210,6 +252,11 @@ void Parser::Declaration() {
         while ( _lookAhead.getTokenType() == SYM_COMMA ) {
             
             match(SYM_COMMA);
+            
+            if (_lookAhead.getTokenType() == TOK_IDENT)
+                if(!_symbolTable->define(_lookAhead.getLexeme(), ""))
+                    _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
+            
             match(TOK_IDENT);
             
             if ( _lookAhead.getTokenType() == SYM_SQ_OPEN ) {
@@ -225,7 +272,7 @@ void Parser::Declaration() {
     _message.print(DBUG, "PARSER: End of Declaration()\n");
 }
 
-void Parser::Statement() {
+void Parser::Statement(string functionName) {
     
     _message.print(DBUG, "PARSER: In Statement()\n");
     
@@ -241,11 +288,13 @@ void Parser::Statement() {
     
     if ( synchronized(statementFirstSet, followSet, "Expected Statement") ) {
         if ( _lookAhead.getTokenType() == SYM_CURLY_OPEN ) {
-            CompoundStatement();
+            _symbolTable->openScope();
+            CompoundStatement(functionName);
+            _symbolTable->closeScope();
         } else if ( _lookAhead.getTokenType() == KW_IF ) {
-            SelectionStatement();
+            SelectionStatement(functionName);
         } else if ( _lookAhead.getTokenType() == KW_WHILE ) {
-            RepetitionStatement();
+            RepetitionStatement(functionName);
         } else if ( _lookAhead.getTokenType() == KW_RETURN ) {
             ReturnStatement();
         } else {
@@ -281,7 +330,7 @@ void Parser::ExpressionStatement() {
     _message.print(DBUG, "PARSER: End of ExpressionStatement()\n");
 }
 
-void Parser::SelectionStatement() {
+void Parser::SelectionStatement(string functionName) {
     
     _message.print(DBUG, "PARSER: In SelectionStatement()\n");
     
@@ -297,18 +346,18 @@ void Parser::SelectionStatement() {
         match(SYM_OPEN);
         Expression();
         match(SYM_CLOSE);
-        Statement();
+        Statement(functionName);
         
         if (_lookAhead.getTokenType() == KW_ELSE) {
             match(KW_ELSE);
-            Statement();
+            Statement(functionName);
         }
         
     }
     _message.print(DBUG, "PARSER: End of SelectionStatement()\n");
 }
 
-void Parser::RepetitionStatement() {
+void Parser::RepetitionStatement(string functionName) {
     
     _message.print(DBUG, "PARSER: In RepetitionStatement()\n");
     
@@ -324,7 +373,7 @@ void Parser::RepetitionStatement() {
         match(SYM_OPEN);
         Expression();
         match(SYM_CLOSE);
-        Statement();
+        Statement(functionName);
         
     }
     
@@ -550,6 +599,10 @@ void Parser::Value() {
             match(SYM_CLOSE);
             
         } else if ( _lookAhead.getTokenType() == TOK_IDENT ) {
+            
+            if (_lookAhead.getTokenType() == TOK_IDENT)
+                if(!_symbolTable->isDefined(_lookAhead.getLexeme()))
+                    _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is not defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
             
             match(TOK_IDENT);
             
