@@ -180,6 +180,7 @@ public:
     bool isDefined(string);
     bool define(string, string);
     bool reDefine(string, string);
+    // add a delete function to remove symbols from table
     string lookup(string);
 
 };
