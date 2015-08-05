@@ -141,7 +141,6 @@ void Parser::TranslationUnit() {
                 }
                 CompoundStatement(identifier); // FUNCTION DEFINITION
             }
-
             _symbolTable->closeScope();
         }
     }
@@ -346,6 +345,7 @@ void Parser::Statement(string functionName) {
         if ( _lookAhead.getTokenType() == SYM_CURLY_OPEN ) {
             _symbolTable->openScope();
             CompoundStatement(functionName);
+            _symbolTable->dump();
             _symbolTable->closeScope();
         } else if ( _lookAhead.getTokenType() == KW_IF ) {
             SelectionStatement(functionName);
@@ -474,9 +474,9 @@ void Parser::ReturnStatement(string functionName) {
         }
         
         string def = _symbolTable->lookup(functionName);
-
+        def = def.substr(0,1) == "v" ? "void" : (def.substr(0,1) == "i" ? "int" : "float");
         if(def.empty() || def.substr(0,1) != type) {
-            _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Function %s should return %s", _lookAhead.getRow() , _lookAhead.getCol(),functionName.c_str(),def.c_str());
+            _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Function '%s' shoule return '%s' value", _lookAhead.getRow() , _lookAhead.getCol(),functionName.c_str(),def.c_str());
         }
     
         match(SYM_SEMICOLON);
