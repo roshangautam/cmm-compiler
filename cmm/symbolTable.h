@@ -181,6 +181,7 @@ public:
     bool define(string, string);
     bool reDefine(string, string);
     // add a delete function to remove symbols from table
+    void remove(string);
     string lookup(string);
 
 };
