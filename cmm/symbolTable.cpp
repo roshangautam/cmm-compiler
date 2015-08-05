@@ -66,5 +66,11 @@ string SymbolTable::lookup(string symbol) {
 	Entry *entry = searchTable(symbol);
 	if (entry != NULL)
         return entry->getDefinition();
-	return NULL;
+	return defintion;
+}
+
+void SymbolTable::remove(string symbol) {
+    Entry *entry = searchScope(_currentScope, symbol);
+    Entry *nextEntry = entry->getNextEntry();
+    entry = nextEntry;
 }

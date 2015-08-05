@@ -26,8 +26,6 @@ using namespace std;
 #define EOL 	"\n"
 
 class Entry {
-    
- 
     string _symbol;
     string _define;
     Entry* _nextEntry;
@@ -35,7 +33,6 @@ class Entry {
 public:
     
     Entry() {
-        //default constructor
         _symbol = "";
         _define = "";
         _nextEntry = NULL;
@@ -74,7 +71,6 @@ class Scope {
     Entry* _entry[MAXENT];
 public:
     Scope() {
-        // default constructor
         for (int i = 0 ; i < MAXENT; i++) {
             _entry[i] = NULL;
         }
@@ -103,6 +99,10 @@ public:
     Entry* getEntry(int index) {
         return _entry[index];
     }
+    
+    void deleteEntry(int index) {
+        delete _entry[index];
+    }
 };
 
 
@@ -115,19 +115,36 @@ class SymbolTable {
 
     }
     
+public:
+    
+    SymbolTable() {
+        _currentScope = NULL;
+    }
+    
+    SymbolTable(Message message) : SymbolTable() {
+        _message = message;
+        _message.print(DBUG, "SYMBOL-TABLE: Intialized");
+        openScope(); // open global scope        
+    }
+    
+    ~ SymbolTable() {
+        while (_currentScope != NULL)
+            closeScope();
+        _message.print(DBUG, "SYMBOL-TABLE: Destroyed");
+    }
+
     void openScope() {
-        Scope newScope = Scope();
-        newScope.setId(_currentScope == NULL ? 0 : _currentScope->getId() + 1);
-        newScope.setNextScope(_currentScope);
-        _currentScope = &newScope;
-        _message.print(DBUG, "SYMBOL-TABLE: Scope %d Opened", newScope.getId());
+        Scope *newScope = new Scope();
+        newScope->setId(_currentScope == NULL ? 0 : _currentScope->getId() + 1);
+        newScope->setNextScope(_currentScope);
+        _currentScope = newScope;
+        _message.print(DBUG, "SYMBOL-TABLE: Scope %d Opened", newScope->getId());
     }
     
     void closeScope() {
-    	int i;
         Scope *nextScope = _currentScope->getNextScope();
-    	Entry *nextEntry;
-    	for ( i = 0; i < MAXENT; ++i)
+        Entry *nextEntry;
+        for (int i = 0; i < MAXENT; ++i)
             while (_currentScope->getEntry(i) != NULL) {
                 nextEntry = _currentScope->getEntry(i)->getNextEntry();
                 _currentScope->setEntry(i, nextEntry);
@@ -138,46 +155,33 @@ class SymbolTable {
     
     // returns pointer to entry if found, NULL otherwise
     Entry* searchScope(Scope *scope, string symbol) {
-    	Entry *entry = scope->getEntry(hash(symbol));	// look only in current scope
-    	while (entry != NULL) {					// search all symbols in list
+        Entry *entry = scope->getEntry(hash(symbol));	// look only in current scope
+        while (entry != NULL) {					// search all symbols in list
             if( symbol == entry->getSymbol())
                 break; // found symbol, stop looking
             entry = entry->getNextEntry();
-    	}
-    	return entry;
+        }
+        return entry;
     }
     
     // returns pointer to entry if found, NULL otherwise
     Entry *searchTable(string symbol) {
         Entry *entry = NULL;
-    	Scope *scope = _currentScope;
-    	while (scope != NULL) {					// search all scopes
-    		if ((entry = searchScope(scope, symbol)) != NULL)
-    			break;							// found in scope, stop looking
-    		scope = scope->getNextScope();
-    	}	// sco points to matched Scope if found, NULL otherwise
-    	return entry;
+        Scope *scope = _currentScope;
+        while (scope != NULL) {					// search all scopes
+            if ((entry = searchScope(scope, symbol)) != NULL)
+                break;							// found in scope, stop looking
+            scope = scope->getNextScope();
+        }	// sco points to matched Scope if found, NULL otherwise
+        return entry;
     }
     
-public:
-    
-    SymbolTable() {
-        _currentScope = NULL;
-        _message = Message();
-        openScope(); // open global scope
-        _message.print(DBUG, "SYMBOL-TABLE: Intialized");
-    }
-    
-    ~ SymbolTable() {
-        while (_currentScope != NULL)
-            closeScope();
-        _message.print(DBUG, "SYMBOL-TABLE: Destroyed");
-    }
-
     void dump();
     bool isDefined(string);
     bool define(string, string);
     bool reDefine(string, string);
+    // add a delete function to remove symbols from table
+    void remove(string);
     string lookup(string);
 
 };
