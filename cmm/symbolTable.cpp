@@ -19,7 +19,7 @@ void SymbolTable::dump() {
 		for (i = 0; i < MAXENT; ++i)
 			if (scope->getEntry(i) != NULL) {
                 entry = scope->getEntry(i);
-                cerr << TABS << "hash(" << i << ")" << SPC << "{\"" << entry->getSymbol() << "\"";
+                cerr << TABS << "hash(" << i << ")" << SPC << "{\"" << entry->getSymbol() << "\"," << entry->getDefinition() ;
 				entry = entry->getNextEntry();
 				while (entry != NULL) {
                     cerr << ",\"" << entry->getSymbol() << "\"";

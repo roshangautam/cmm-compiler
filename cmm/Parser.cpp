@@ -56,7 +56,7 @@ void Parser::TranslationUnit() {
         
         if (_lookAhead.getTokenType() == TOK_IDENT)
             if(!_symbolTable->define(_lookAhead.getLexeme(), type))
-                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
+                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Redifinition of '%s'", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
         
         match(TOK_IDENT);
         if( _lookAhead.getTokenType() == SYM_SQ_OPEN ||
@@ -64,7 +64,7 @@ void Parser::TranslationUnit() {
             _lookAhead.getTokenType() == SYM_SEMICOLON ) {  // VARIABLE DECLARATION
             
             if (type == "v") {
-                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. variable can not of type void", _lookAhead.getRow() , _lookAhead.getCol());
+                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Variable has incomplete type 'void'", _lookAhead.getRow() , _lookAhead.getCol());
                 _symbolTable->remove(identifier);
             }
             
@@ -75,13 +75,12 @@ void Parser::TranslationUnit() {
                 if (_lookAhead.getTokenType() == SYM_SQ_CLOSE) {
                     match(SYM_SQ_CLOSE); // MUST MATCH SQUARE BRACKET CLOSE
                 }
-                
+
                 if (type != "v") {
                     _symbolTable->reDefine(identifier, type == "i" ? "I" : "F");
                 }
             }
 
-            
             while ( _lookAhead.getTokenType() == SYM_COMMA ) {
                 
                 match(SYM_COMMA);
@@ -91,7 +90,7 @@ void Parser::TranslationUnit() {
                 if (_lookAhead.getTokenType() == TOK_IDENT)
                     if(type != "v" &&
                        !_symbolTable->define(_lookAhead.getLexeme(), type))
-                        _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
+                        _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Redifinition of '%s'", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
                 
                 match(TOK_IDENT);
                 
@@ -137,13 +136,15 @@ void Parser::TranslationUnit() {
                 match(SYM_SEMICOLON); // FUNCTION DECLARATION
             else {
                 if (externDef) {
-                    _message.print(ERROR, "Extern on function defintion");
+                    _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Function defition can not be of 'extern' type", _lookAhead.getRow() , _lookAhead.getCol());
                 }
                 CompoundStatement(identifier); // FUNCTION DEFINITION
             }
+//            _symbolTable->dump();            
             _symbolTable->closeScope();
         }
     }
+
     _message.print(DBUG, "PARSER: End of TranslationUnit()\n");
 }
 
@@ -200,10 +201,10 @@ string Parser::Parameter() {
         if (_lookAhead.getTokenType() == TOK_IDENT)
             if(type != "v" && // make sure its not void type
                !_symbolTable->define(_lookAhead.getLexeme(), type))
-                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
+                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Redifinition of '%s'", _lookAhead.getRow() , _lookAhead.getCol(), _lookAhead.getLexeme());
         
         if (type == "v") {
-            _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. variable can not of type void", _lookAhead.getRow() , _lookAhead.getCol());
+            _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Variable has incomplete type 'void'", _lookAhead.getRow() , _lookAhead.getCol());
             _symbolTable->remove(identifier);
         }
         
@@ -278,11 +279,10 @@ void Parser::Declaration() {
         if (_lookAhead.getTokenType() == TOK_IDENT)
             if(type != "v" &&
                !_symbolTable->define(_lookAhead.getLexeme(), type))
-                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), identifier.c_str());
+                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Redifinition of '%s'", _lookAhead.getRow() , _lookAhead.getCol(), identifier.c_str());
         
         if (type == "v") {
-            _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. variable can not of type void", _lookAhead.getRow() , _lookAhead.getCol());
-            _symbolTable->remove(identifier);
+            _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Variable has incomplete type 'void'", _lookAhead.getRow() , _lookAhead.getCol());
         }
         
         match(TOK_IDENT);
@@ -307,7 +307,7 @@ void Parser::Declaration() {
             if (_lookAhead.getTokenType() == TOK_IDENT)
                 if(type != "v" &&
                    !_symbolTable->define(_lookAhead.getLexeme(), type))
-                    _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is already defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), identifier.c_str());
+                    _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Redifinition of '%s'", _lookAhead.getRow() , _lookAhead.getCol(), identifier.c_str());
             
             match(TOK_IDENT);
             
@@ -345,7 +345,7 @@ void Parser::Statement(string functionName) {
         if ( _lookAhead.getTokenType() == SYM_CURLY_OPEN ) {
             _symbolTable->openScope();
             CompoundStatement(functionName);
-            _symbolTable->dump();
+//            _symbolTable->dump();
             _symbolTable->closeScope();
         } else if ( _lookAhead.getTokenType() == KW_IF ) {
             SelectionStatement(functionName);
@@ -375,10 +375,12 @@ void Parser::ExpressionStatement() {
     if ( synchronized(firstSet, followSet, "Expected Expression Statement") ) {
         
         type = Expression();
-        
+
         if( _lookAhead.getTokenType() == SYM_ASSIGN ) {
             match(SYM_ASSIGN);
+
             type1 = Expression();
+
             // check that type1 and type2 are assignment compatible
             if(!((type == "f" && type1 == "i") ||
                (type == "i" && type1 == "i") ||
@@ -474,7 +476,9 @@ void Parser::ReturnStatement(string functionName) {
         }
         
         string def = _symbolTable->lookup(functionName);
-        def = def.substr(0,1) == "v" ? "void" : (def.substr(0,1) == "i" ? "int" : "float");
+        if (!def.empty())
+            def = def.substr(0,1) == "v" ? "void" : (def.substr(0,1) == "i" ? "int" : "float");
+
         if(def.empty() || def.substr(0,1) != type) {
             _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Function '%s' shoule return '%s' value", _lookAhead.getRow() , _lookAhead.getCol(),functionName.c_str(),def.c_str());
         }
@@ -500,7 +504,7 @@ string Parser::Expression() {
     if ( synchronized(firstSet, followSet, "Expected Expression") ) {
         
         type = AndExpression();
-        
+
         while ( _lookAhead.getTokenType() == SYM_OR ) {
             match(SYM_OR);
             type = "i";
@@ -560,7 +564,7 @@ string Parser::RelationExpression() {
     if ( synchronized(firstSet, followSet, "Expected Relational Expression") ) {
         
         type = SimpleExpression();
-        
+
         if ( memberOf(_lookAhead.getTokenType(), set) ) {
             
             //check to make sure both types of simpleexpression are numeric
@@ -604,12 +608,12 @@ string Parser::SimpleExpression() {
     
     static tokenType followSet[] = {SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
 
-    string type, type1, returnType = "i";
+    string type, type1;
     
     if ( synchronized(firstSet, followSet, "Expected Simple Expression") ) {
         
         type = Term();
-        
+
         while ( _lookAhead.getTokenType() == SYM_PLUS ||
                 _lookAhead.getTokenType() == SYM_MINUS ) {
             
@@ -624,16 +628,17 @@ string Parser::SimpleExpression() {
             if((type == "f" && type1 == "i") ||
                (type == "f" && type1 == "f") ||
                (type == "i" && type1 == "f")) {
-                returnType = "f";
+                type = "f";
             } else if(type == "i" && type1 == "i") {
-                returnType = "i";
+                type = "i";
             } else {
                 _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Incompatible operation", _lookAhead.getRow() , _lookAhead.getCol());
             }
         }
     }
+    
     _message.print(DBUG, "PARSER: End of SimpleExpression()\n");
-    return returnType;
+    return type;
 }
 
 string Parser::Term() {
@@ -646,7 +651,7 @@ string Parser::Term() {
 
     static tokenType followSet[] = {SYM_PLUS, SYM_MINUS, SYM_NOT, SYM_LESS_EQ, SYM_LESS, SYM_GREATER_EQ, SYM_GREATER, SYM_EQUAL, SYM_NOT_EQ, SYM_AND, SYM_OR, SYM_ASSIGN, SYM_SEMICOLON, SYM_OPEN, SYM_SQ_OPEN, SYM_COMMA, SYM_CLOSE, (tokenType) - 1};
     
-    string type, type1, returnType = "i";
+    string type, type1;
     
     if ( synchronized(firstSet, followSet, "Expected Term") ) {
         
@@ -670,19 +675,19 @@ string Parser::Term() {
             if((type == "f" && type1 == "i") ||
                (type == "f" && type1 == "f") ||
                (type == "i" && type1 == "f")) {
-                returnType = "f";
+                type = "f";
                 if (isModOperation) {
-                    returnType = "i";
+                    type = "i";
                 }
             } else if(type == "i" && type1 == "i") {
-                returnType = "i";
+                type = "i";
             } else {
                 _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Incompatible operation", _lookAhead.getRow() , _lookAhead.getCol());
             }
         }
     }
     _message.print(DBUG, "PARSER: End of Term()\n");
-    return returnType;
+    return type;
 }
 
 string Parser::Factor() {
@@ -716,6 +721,7 @@ string Parser::Factor() {
             _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Invalid operation", _lookAhead.getRow() , _lookAhead.getCol());
         }
     }
+    
      _message.print(DBUG, "PARSER: End of Factor()\n");
     return type;
 }
@@ -739,7 +745,7 @@ string Parser::Value() {
     string type, identifier;
     
     if ( synchronized(firstSet, followSet, "Expected Value") ) {
-        
+
         if ( _lookAhead.getTokenType() == SYM_OPEN ) {
             
             match(SYM_OPEN);
@@ -750,9 +756,9 @@ string Parser::Value() {
             
             identifier = _lookAhead.getLexeme();
             type = _symbolTable->lookup(identifier);
-            
+
             if(!_symbolTable->isDefined(_lookAhead.getLexeme()))
-                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Identifier %s is not defined in this scope", _lookAhead.getRow() , _lookAhead.getCol(), identifier.c_str());
+                _message.print(ERROR, "SEMANTIC-ANALYZER: Semantic issue on line: %i col: %i. Use of undeclared identifier '%s'", _lookAhead.getRow() , _lookAhead.getCol(), identifier.c_str());
             
             match(TOK_IDENT);
 
